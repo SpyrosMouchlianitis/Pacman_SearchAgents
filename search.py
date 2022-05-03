@@ -92,22 +92,22 @@ def depthFirstSearch(problem):
     graph.enqueue(startNode)
 
     while not graph.isEmpty():
-        currentState, actions = graph.dequeue()
+        currentState, steps = graph.dequeue()
 
         if currentState not in visited:
             visited.append(currentState)
 
             if problem.isFinalState(currentState):
-                return actions
+                return steps
             else:
                 nextStates = problem.getNextStates(currentState)
 
-                for successor, action, stepCost in nextStates:
-                    nextAction = actions + [action]
-                    nextNode = (successor, nextAction)
+                for nextState, nextStep, nextCost in nextStates:
+                    newStep = steps + [nextStep]
+                    nextNode = (nextState, newStep)
                     graph.enqueue(nextNode)
 
-    return actions
+    return steps
 
 
 def breadthFirstSearch(problem):
@@ -120,24 +120,24 @@ def breadthFirstSearch(problem):
     graph.enqueue(startNode)
 
     while not graph.isEmpty():
-        currentState, actions, cost = graph.dequeue()
+        currentState, steps, cost = graph.dequeue()
 
         if currentState not in visitedNodes:
             visitedNodes.append(currentState)
 
             if problem.isFinalState(currentState):
-                return actions
+                return steps
             else:
                 successors = problem.getNextStates(currentState)
 
-                for nextState, nextAction, nextCost in successors:
-                    newAction = actions + [nextAction]
+                for nextState, nextSteps, nextCost in successors:
+                    newStep = steps + [nextSteps]
                     newCost = cost + nextCost
-                    newNode = (nextState, newAction, newCost)
+                    newNode = (nextState, newStep, newCost)
 
                     graph.enqueue(newNode)
 
-    return actions
+    return steps
 
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
@@ -149,24 +149,24 @@ def uniformCostSearch(problem):
     graph.enqueue(startNode, 0)
 
     while not graph.isEmpty():
-        currentState, actions, cost = graph.dequeue()
+        currentState, steps, cost = graph.dequeue()
 
         if (currentState not in visited) or (cost < visited[currentState]):
             visited[currentState] = cost
 
             if problem.isFinalState(currentState):
-                return actions
+                return steps
             else:
                 nextStates = problem.getNextStates(currentState)
 
-                for nextState, nextAction, nextCost in nextStates:
-                    newAction = actions + [nextAction]
+                for nextState, nextStep, nextCost in nextStates:
+                    newStep = steps + [nextStep]
                     newCost = cost + nextCost
-                    newNode = (nextState, newAction, newCost)
+                    newNode = (nextState, newStep, newCost)
 
                     graph.enqueue(newNode, newCost)
 
-    return actions
+    return steps
 
 
 def nullHeuristic(state, problem=None):
@@ -187,23 +187,21 @@ def aStarSearch(problem, heuristic=nullHeuristic):
     graph.enqueue(startNode, 0)
 
     while not graph.isEmpty():
-        currentState, actions, currentCost = graph.dequeue()
-
-        currentNode = (currentState, actions, currentCost)
+        currentState, steps, currentCost = graph.dequeue()
 
         if problem.isFinalState(currentState):
-            return actions
+            return steps
         else:
             nextStates = problem.getNextStates(currentState)
 
-            for nextState, nextAction, nextCost in nextStates:
-                newAction = actions + [nextAction]
+            for nextState, nextStep, nextCost in nextStates:
+                newStep = steps + [nextStep]
                 newCost = currentCost + nextCost
-                newNode = (nextState, newAction, newCost)
+                newNode = (nextState, newStep, newCost)
 
                 alreadyVisited = False
                 for visited in visitedNodes:
-                    visitedState, visitedAction, visitedCost = visited
+                    visitedState, visitedStep, visitedCost = visited
 
                     if (nextState == visitedState) and (newCost >= visitedCost):
                         alreadyVisited = True
@@ -212,7 +210,7 @@ def aStarSearch(problem, heuristic=nullHeuristic):
                     graph.enqueue(newNode, newCost + heuristic(nextState, problem))
                     visitedNodes.append(newNode)
 
-    return actions
+    return steps
 
 
 
