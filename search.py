@@ -77,40 +77,38 @@ def depthFirstSearch(problem):
     """
     Search the deepest nodes in the search tree first.
 
-    Your search algorithm needs to return a list of actions that reaches the
+    Your search algorithm needs to return a list of steps that reaches the
     goal. Make sure to implement a graph search algorithm.
 
     To get started, you might want to try some of these simple commands to
     understand the search problem that is being passed in:
     """
-    print("Start:", problem.getInitialState())
-    print("Is the start a goal?", problem.isFinalState(problem.getInitialState()))
-    print("Start's successors:", problem.getNextStates(problem.getInitialState()))
 
     graph = util.Stack()
     visited = []
     startState = problem.getInitialState()
-    startNode = (startState, [])
+    startNode = (startState, [], 0)
 
     graph.enqueue(startNode)
 
     while not graph.isEmpty():
-        currentState, actions = graph.dequeue()
+        currentState, steps, cost = graph.dequeue()
+
+        if problem.isFinalState(currentState):
+            return steps
 
         if currentState not in visited:
             visited.append(currentState)
 
-            if problem.isFinalState(currentState):
-                return actions
-            else:
-                nextStates = problem.getNextStates(currentState)
+            nextStates = problem.getNextStates(currentState)
 
-                for successor, action, stepCost in nextStates:
-                    nextAction = actions + [action]
-                    nextNode = (successor, nextAction)
-                    graph.enqueue(nextNode)
+            for nextState, nextStep, nextCost in nextStates:
+                newCost = cost + nextCost
+                newStep = steps + [nextStep]
+                newNode = (nextState, newStep, newCost)
+                graph.enqueue(newNode)
 
-    return actions
+    return steps
 
 
 def breadthFirstSearch(problem):
