@@ -178,7 +178,35 @@ def nullHeuristic(state, problem=None):
 
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
-    
+    graph = util.PriorityQueue()
+    startState = problem.getInitialState()
+    startNode = (startState, [], 0)
+    startHeuristic = heuristic(startState, problem)
+    visited = []
+    graph.enqueue(startNode, startHeuristic)
+    steps = []
+
+    while not graph.isEmpty():
+        currentPosition, steps, cost = graph.dequeue()
+
+        if problem.isFinalState(currentPosition):
+            return steps
+
+        if not currentPosition in visited:
+            visited.append(currentPosition)
+
+            nextStates = problem.getNextStates(currentPosition)
+
+            for nextState, nextStep, nextCost in nextStates:
+                if not nextState in visited:
+                    stepsList = list(steps)
+                    stepsList += [nextStep]
+                    costActions = problem.getActionCost(stepsList)
+                    nextNode = (nextState, stepsList, 1)
+                    heuristic_ = heuristic(nextState, problem)
+                    graph.enqueue(nextNode, costActions + heuristic_)
+
+    return []
 
 
 
