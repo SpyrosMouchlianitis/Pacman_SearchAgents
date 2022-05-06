@@ -295,14 +295,14 @@ class CornersProblem(search.SearchProblem):
         space)
         """
         visited = []
-        return (self.startingPosition, visited)
+        return [self.startingPosition, visited]
 
 
     def isFinalState(self, state):
         """
         Returns whether this search state is a goal state of the problem.
         """
-        return len(state[1]) == 4
+        return state[0] in self.corners
 
     def getNextStates(self, state):
         """
