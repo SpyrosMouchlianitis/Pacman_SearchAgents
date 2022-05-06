@@ -107,7 +107,7 @@ def depthFirstSearch(problem):
                     nextNode = (nextState, newStep)
                     graph.enqueue(nextNode)
 
-    return steps
+    return actions
 
 
 def breadthFirstSearch(problem):
