@@ -288,21 +288,41 @@ class CornersProblem(search.SearchProblem):
         # Please add any code here which you would like to use
         # in initializing the problem
         "*** YOUR CODE HERE ***"
+        self.startingGameState = startingGameState
+
+        visited = [False, False, False, False]
+
+        if self.startingPosition == self.corners[0]:
+            visited[0] = True
+
+        if self.startingPosition == self.corners[1]:
+            visited[1] = True
+
+        if self.startingPosition == self.corners[2]:
+            visited[2] = True
+
+        if self.startingPosition == self.corners[3]:
+            visited[3] = True
+
+        self.startingState = (self.startingPosition, tuple(visited))
 
     def getInitialState(self):
         """
         Returns the start state (in your state space, not the full Pacman state
         space)
         """
-        visited = []
-        return (self.startingPosition, visited)
+        return self.startingState
 
 
     def isFinalState(self, state):
         """
         Returns whether this search state is a goal state of the problem.
         """
-        return len(state[1]) == 4
+        visited = state[1]
+        if visited[0] and visited[1] and visited[2] and visited[3]:
+            return True
+        else:
+            return False
 
     def getNextStates(self, state):
         """
@@ -317,7 +337,6 @@ class CornersProblem(search.SearchProblem):
 
         successors = []
         currentPosition = state[0]
-        foundCorners = state[1]
         for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
             # Add a successor state to the successor list if the action is legal
             # Here's a code snippet for figuring out whether a new position hits a wall:
@@ -331,18 +350,25 @@ class CornersProblem(search.SearchProblem):
             hitsWall = self.walls[nextx][nexty]
 
             if not hitsWall:
-                if (nextx, nexty) in self.corners and (nextx, nexty) not in foundCorners:
-                    visited = foundCorners + [(nextx, nexty)]
-                    nextPosition = (nextx, nexty)
-                    nextState = (nextPosition, visited)
-                    successor = (nextState, action, 1)
-                    successors.append(successor)
-                else:
-                    nextPosition = (nextx, nexty)
-                    nextState = (nextPosition, foundCorners)
-                    successor = (nextState, action, 1)
-                    successors.append(successor)
+                nextState = (nextx, nexty)
 
+                visited = list(state[1])
+
+                if nextState == self.corners[0]:
+                    visited[0] = True
+
+                if nextState == self.corners[1]:
+                    visited[1] = True
+
+                if nextState == self.corners[2]:
+                    visited[2] = True
+
+                if nextState == self.corners[3]:
+                    visited[3] = True
+
+                cost = 1
+
+                successors.append(((nextState, tuple(visited)), action, cost))
 
         self._expanded += 1 # DO NOT CHANGE
         return successors
