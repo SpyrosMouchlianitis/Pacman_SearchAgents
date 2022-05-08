@@ -402,24 +402,22 @@ def cornersHeuristic(state, problem):
     """
     corners = problem.corners # These are the corner coordinates
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
-    unvisited = []
-    visited = state[1]
-    node = state[0]
     heuristic = 0
+    currentPosition = state[0]
+    cornerStatus = state[1]
 
-    for corner in corners:
-        if not corner in visited:
-            unvisited.append(corner)
-
-    while unvisited:
-        distance, corner = min([(util.manhattanDistance(node, corner), corner)
-                                for corner in unvisited])
-
-        heuristic += distance
-        node = corner
-        unvisited.remove(corner)
-
+    if problem.isFinalState(state):
         return heuristic
+
+    distancesFromFinalStates = []
+
+    for index, item in enumerate(cornerStatus):
+        if item == False:
+            distancesFromFinalStates.append(util.manhattanDistance(currentPosition, corners[index]))
+
+    heuristic = max(distancesFromFinalStates)
+
+    return heuristic
 
 
 class AStarCornersAgent(SearchAgent):
